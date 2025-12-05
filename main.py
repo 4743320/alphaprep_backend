@@ -131,7 +131,7 @@ from dotenv import load_dotenv
 import os
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
-
+import json
 # ---------------------------------------------------
 # CORS SETTINGS
 # ---------------------------------------------------
@@ -148,11 +148,22 @@ origins = [
 # ---------------------------------------------------
 load_dotenv()
 
-cred_path = os.getenv('FIREBASE_KEY_PATH', 'firebase_key.json')
-cred = credentials.Certificate(cred_path)
+firebase_json = os.environ.get("FIREBASE_KEY_JSON")
+if not firebase_json:
+    raise ValueError("FIREBASE_KEY_JSON env variable not set!")
 
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+cred_dict = json.loads(firebase_json)   # Convert JSON string to dict
+cred = credentials.Certificate(cred_dict)
+
+firebase_admin.initialize_app(cred)  # <--- fully qualified
+
+db = firestore.client()  # <-- initialize the Firestore client
+
+# cred_path = os.getenv('FIREBASE_KEY_PATH', 'firebase_key.json')
+# cred = credentials.Certificate(cred_path)
+
+# firebase_admin.initialize_app(cred)
+# db = firestore.client()
 
 # ---------------------------------------------------
 # FASTAPI APP
