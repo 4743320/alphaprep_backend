@@ -9,6 +9,7 @@ env/
 # Secrets / environment variables
 .env
 *.env
+firebase_key.json
 
 # Editor/IDE files
 .vscode/
