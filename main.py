@@ -149,25 +149,28 @@ origins = [
 load_dotenv()
 
 
-firebase_key_json = os.getenv("FIREBASE_KEY_PATH")
 
+firebase_key_json = os.getenv("FIREBASE_KEY_JSON")
 if not firebase_key_json:
-    raise ValueError("FIREBASE_KEY_PATH env variable not set!")
+    raise ValueError("FIREBASE_KEY_JSON env variable not set!")
 
 cred_dict = json.loads(firebase_key_json)
-cred = credentials.Certificate(cred_dict)
 
-initialize_app(cred)
+# Fix the private key line breaks
+cred_dict["private_key"] = cred_dict["private_key"].replace("\\n", "\n")
+
+cred = credentials.Certificate(cred_dict)
+firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # ---------------------------------------------------
 # OLD INITILIZATION
 # ---------------------------------------------------
-cred_path = os.getenv('FIREBASE_KEY_PATH', 'firebase_key.json')
-cred = credentials.Certificate(cred_path)
+# cred_path = os.getenv('FIREBASE_KEY_PATH', 'firebase_key.json')
+# cred = credentials.Certificate(cred_path)
 
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+# firebase_admin.initialize_app(cred)
+# db = firestore.client()
 
 # ---------------------------------------------------
 # FASTAPI APP
