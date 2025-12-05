@@ -148,22 +148,25 @@ origins = [
 # ---------------------------------------------------
 load_dotenv()
 
-firebase_json = os.environ.get("FIREBASE_KEY_JSON")
-if not firebase_json:
-    raise ValueError("FIREBASE_KEY_JSON env variable not set!")
+firebase_key_json = os.getenv('FIREBASE_KEY_PATH')  # must match Vercel env variable
 
-cred_dict = json.loads(firebase_json)   # Convert JSON string to dict
+if not firebase_key_json:
+    raise ValueError("FIREBASE_KEY_PATH env variable not set!")
+
+cred_dict = json.loads(firebase_key_json)  # convert JSON string to dict
 cred = credentials.Certificate(cred_dict)
 
-firebase_admin.initialize_app(cred)  # <--- fully qualified
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
-db = firestore.client()  # <-- initialize the Firestore client
+# ---------------------------------------------------
+# OLD INITILIZATION
+# ---------------------------------------------------
+cred_path = os.getenv('FIREBASE_KEY_PATH', 'firebase_key.json')
+cred = credentials.Certificate(cred_path)
 
-# cred_path = os.getenv('FIREBASE_KEY_PATH', 'firebase_key.json')
-# cred = credentials.Certificate(cred_path)
-
-# firebase_admin.initialize_app(cred)
-# db = firestore.client()
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # ---------------------------------------------------
 # FASTAPI APP
