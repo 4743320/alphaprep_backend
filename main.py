@@ -125,7 +125,7 @@
 
 from fastapi import FastAPI
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, initialize_app
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
@@ -148,15 +148,16 @@ origins = [
 # ---------------------------------------------------
 load_dotenv()
 
-firebase_key_json = os.getenv('FIREBASE_KEY_PATH')  # must match Vercel env variable
+
+firebase_key_json = os.getenv("FIREBASE_KEY_PATH")
 
 if not firebase_key_json:
     raise ValueError("FIREBASE_KEY_PATH env variable not set!")
 
-cred_dict = json.loads(firebase_key_json)  # convert JSON string to dict
+cred_dict = json.loads(firebase_key_json)
 cred = credentials.Certificate(cred_dict)
 
-firebase_admin.initialize_app(cred)
+initialize_app(cred)
 db = firestore.client()
 
 # ---------------------------------------------------
